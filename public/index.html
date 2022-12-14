@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+  </head>
+  <body class="bg-gray-50 flex justify-center items-center h-screen w-screen">
+    <main class="min-h-[250px] min-w-[400px] bg-white p-5 rounded-md shadow-xl">
+      <section class="">
+        <h1 class="text-3xl font-bold p-2">URL Shortener APP</h1>
+        <form action="" class="shortener-form">
+          <input
+            type="url"
+            class="url-input w-full border text-sm bg-slate-200 p-3 rounded-md"
+            name="url"
+            required
+            autofocus
+            placeholder="paste url link here"
+          />
+          <button
+            type="submit"
+            class="submit-btn p-2 text-xl bg-blue-500 mt-2 text-white mx-auto rounded-xl"
+          >
+            Shorten!
+          </button>
+        </form>
+        <section class="result-section text-center text-xl text-gray-400"></section>
+      </section>
+    </main>
+
+    <script>
+      const form = document.querySelector(".shortener-form");
+      const result = document.querySelector(".result-section");
+
+      const button = document.querySelector(".submit-btn");
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const input = document.querySelector(".url-input");
+        fetch("/urlapi", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ longUrl: input.value }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw Error(response.statusText());
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data.shortUrl);
+            result.insertAdjacentHTML(
+              "afterbegin",
+              `
+                <div class="result">
+                    <a target="_blank" class="short_url" href="${data.shortUrl}">${data.shortUrl}</a>
+                </div>
+              `
+            );
+          })
+          .catch((error) => console.log(error));
+      });
+    </script>
+  </body>
+</html>
